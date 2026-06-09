@@ -44,3 +44,35 @@ chmod +x gentoo_helper.sh
 
 # 3. Run as root
 ./gentoo_helper.sh
+```
+
+## 🇧🇷 Versão em Português
+
+Este é um script em Shell Bash desenvolvido para automatizar a instalação básica do Gentoo Linux de forma rápida e prática, configurado sob medida para o usuário [**zLuuzis**](https://github.com/zLuuzis).
+
+### 🚀 Funcionalidades
+* **Rede Automatizada:** Configuração via `nmtui` ou `nmcli`.
+* **Particionamento:** Gerenciamento interativo de discos com `cfdisk`.
+* **Automação:** Formatação e montagem automática de partições.
+* **Compilação Otimizada:** `make.conf` pré-configurado para processadores nativos e placas de vídeo NVIDIA.
+* **Sincronização:** Sincronização automatizada do Portage e Binhost.
+* **Kernel & Ferramentas:** Instalação automática do `gentoo-kernel-bin` e utilitários essenciais.
+* **Sistema de Inicialização:** Configuração rápida de usuários, hostname e serviços iniciais (OpenRC).
+
+### ⚠️ Pré-requisitos
+> [!IMPORTANT]
+> Antes de rodar o script, certifique-se de que:
+> 1. Você iniciou o computador através da ISO oficial de instalação do Gentoo.
+> 2. Você esteja rodando em usuário root (o script verifica isso automaticamente).
+> 3. Há uma conexão ativa com a internet ou interface de rede disponível.
+
+### ⚙️ Como Usar
+```bash
+# 1. Baixe o script
+wget [https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh](https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh)
+
+# 2. Dê permissão de execução
+chmod +x gentoo_helper.sh
+
+# 3. Execute como root
+./gentoo_helper.sh
