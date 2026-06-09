@@ -19,8 +19,3 @@ Antes de rodar o script, certifique-se de que:
 2. Você possui privilégios de **root** (o script verifica isso automaticamente).
 3. Há uma conexão ativa com a internet ou interface de rede disponível.
 
-## 🛠️ Como Usar
-
-1. Baixe o script diretamente no ambiente de instalação:
-   ```bash
-   wget [https://raw.githubusercontent.com/SEU_USUARIO/NOME_DO_REPOSITORIO/main/gentoo_helper.sh](https://raw.githubusercontent.com/SEU_USUARIO/NOME_DO_REPOSITORIO/main/gentoo_helper.sh)
