@@ -1,0 +1,225 @@
+#!/usr/bin/env bash
+
+# --------------------------------------------------------------------------------------------
+# Script    : gentoo_helper
+# Descrição : Script de automação de instalação para o Gentoo, a pedido de um amigo "zLuuzis".
+#	      As configurações foram feitas de acordo com a necessidade do "zLuuzis".
+#             Código revisado pelo Google Gemini, apenas para correção de possíveis bugs.
+# Versão    : 1.1
+# Autor     : im-daxter
+# Data      : 08/06/2026
+# Licença   : GNU/GPL v3.0
+# --------------------------------------------------------------------------------------------
+# Uso: O script deve ser usado em modo root, ele vai criar uma instalação básica do gentoo
+# --------------------------------------------------------------------------------------------
+
+if [[ $UID -ne 0 ]]; then
+    echo "Erro: Este script precisa ser rodado como root!"
+    exit 1
+fi
+
+clear
+echo "Instalação Gentoo"
+
+echo "Conexão da rede"
+sleep 1s
+
+echo -n "Quer usar o nmtui para conectar à internet? (S/n): "
+read -r confirmarRede
+
+confirmarRede="${confirmarRede:-s}"
+confirmarRede="${confirmarRede,,}"
+
+if [[ $confirmarRede == "s" ]]; then
+    nmtui
+else
+    clear
+    echo "Verificando se o pacote 'nmcli' existe"
+    if command -v nmcli > /dev/null; then
+        echo "O pacote existe"
+        echo ""
+        echo "Agora vamos nos conectar à rede"
+        nmcli device wifi list 
+        read -p "Insira o SSID da sua rede: " -r SSID
+        read -p "Insira a senha da sua rede: " -rs senha
+        echo ""
+        nmcli device wifi connect "$SSID" password "$senha"
+    else 
+        echo "O pacote não existe"
+    fi
+fi
+
+clear
+echo "Configurando DNS"
+printf "nameserver 8.8.8.8\nnameserver 1.1.1.1\n" > /etc/resolv.conf
+
+ping -c3 gentoo.org
+
+echo "Verficar os Discos"
+lsblk
+echo ""
+
+read -p "Digite o disco que deseja particionar (Ex: /dev/sda ou /dev/nvme0n1): " -r escolhidoDisco
+echo "Entrando no cfdisk para configurar suas partições..."
+sleep 2s
+cfdisk "$escolhidoDisco"
+
+read -p "Digite exatamente a sua partição de boot (Ex. /dev/sda1): " -r bootPartition
+read -p "Digite exatamente a sua partição root (Ex. /dev/sda2): " -r rootPartition
+read -p "Digite exatamente a sua partição de swap (Ex. /dev/sda3): " -r swapPartition
+
+echo "Formatando e Montando as partições..."
+mkfs.fat -F 32 "$bootPartition"
+mkswap "$swapPartition"
+swapon "$swapPartition"
+mkfs.ext4 "$rootPartition"
+
+mkdir -p /mnt/gentoo
+mount "$rootPartition" /mnt/gentoo
+
+mkdir -p /mnt/gentoo/boot
+mount "$bootPartition" /mnt/gentoo/boot
+
+echo "Partições montadas com sucesso em /mnt/gentoo!"
+
+clear
+echo "Configurando make.conf"
+mkdir -p /mnt/gentoo/etc/portage
+printf 'COMMON_FLAGS="-march=native -O2 -pipe"\n\nMAKEOPTS="-j12"\n\nACCEPT_LICENSE="*"\n\nVIDEO_CARDS="nvidia"\n\nUSE="-systemd elogind udev dbus networkmanager -wayland -gnome -kde -qt -gtk"\n' > /mnt/gentoo/etc/portage/make.conf
+mirrorselect -i -o >> /mnt/gentoo/etc/portage/make.conf
+cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+
+clear
+echo "Gerando o fstab"
+printf "%s\t/boot\tvfat\tdefaults\t0 2\n%s\t/\text4\tnoatime\t0 1\n%s\tnone\tswap\tsw\t0 0\n" "$bootPartition" "$rootPartition" "$swapPartition" > /mnt/gentoo/etc/fstab
+
+clear
+echo "Entrando no Chroot"
+mount --types proc /proc /mnt/gentoo/proc
+mount --rbind /sys /mnt/gentoo/sys
+mount --make-rslave /mnt/gentoo/sys
+mount --rbind /dev /mnt/gentoo/dev
+mount --make-rslave /mnt/gentoo/dev
+mount --bind /run /mnt/gentoo/run
+mount --make-slave /mnt/gentoo/run
+
+chroot /mnt/gentoo /bin/bash << 'EOF'
+source /etc/profile
+export PS1="(chroot) ${PS1}"
+
+clear
+echo "Atualizando o Portage"
+emerge-webrsync
+emerge --sync
+
+clear
+echo "Configurando o binhost"
+mkdir -p /etc/portage/binrepos.conf
+printf "priority = 9999\n" >> /etc/portage/binrepos.conf/gentoobinhost.conf
+printf 'BINPKG_FORMAT="gpkg"\nFEATURES="${FEATURES} binpkg-request-signature"\n' >> /etc/portage/make.conf
+
+clear
+echo "CPU flags"
+emerge --ask=n --oneshot app-portage/cpuid2cpuflags
+mkdir -p /etc/portage/package.use
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+
+clear
+echo "Atualizando sistema"
+emerge -auvDN @world
+emerge --depclean
+
+clear
+echo "Gerando a Timezone"
+ln -sf ../usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
+
+clear
+echo "Locale"
+printf "en_US.UTF-8 UTF-8\npt_BR.UTF-8 UTF-8\n" > /etc/locale.gen
+echo "Gerando o locale..."
+locale-gen
+eselect locale set pt_BR.UTF-8
+
+clear
+echo "Instalando o Kernel"
+mkdir -p /etc/portage/package.use
+printf "sys-kernel/installkernel dracut\n" > /etc/portage/package.use/kernel
+printf "sys-kernel/gentoo-kernel-bin initramfs\n" >> /etc/portage/package.use/kernel
+
+emerge --ask=n sys-kernel/gentoo-kernel-bin
+emerge --ask=n linux-firmware
+emerge --ask=n sys-firmware/sof-firmware
+
+clear
+echo "Instalando ferramentas essenciais"
+echo "Por padrão o script vai instalar: networkmanager grub efibootmgr vim nano doas fastfetch"
+echo -n "Deseja instalar mais algo? (S/n): "
+read -r confirmarEssenciais < /dev/tty
+
+confirmarEssenciais="${confirmarEssenciais:-s}"
+confirmarEssenciais="${confirmarEssenciais,,}"
+
+if [[ $confirmarEssenciais == "s" ]]; then
+    echo ""
+    echo "Digite os pacotes adicionais separados por ESPAÇO"
+    echo "Ex: git tmux htop"
+    read -p "Pacotes extras: " -r pacotesExtras < /dev/tty
+
+    pacotesPadrao="networkmanager grub efibootmgr vim doas fastfetch"
+    echo ""
+    echo "Preparando os pacotes..."
+    sleep 1s
+    emerge --ask=n --verbose $pacotesPadrao $pacotesExtras
+else
+    echo ""
+    echo "Instalando apenas ferramentas padrão..."
+    sleep 1s
+    pacotesPadrao="networkmanager grub efibootmgr vim doas fastfetch"
+    emerge --ask=n --verbose $pacotesPadrao
+fi
+
+clear
+echo "Bootloader"
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Gentoo
+grub-mkconfig -o /boot/grub/grub.cfg
+
+clear
+echo "Configurando Usuário"
+echo "Defina a senha para o usuário root do sistema:"
+passwd root < /dev/tty
+
+clear
+echo "Criando o usuário padrão"
+read -p "Insira o nome do seu usuário comum: " -r username < /dev/tty
+useradd -m -G wheel,audio,video,input -s /bin/bash "$username"
+echo "Defina a senha para o usuário $username:"
+passwd "$username" < /dev/tty
+
+clear
+echo "Criando o hostname"
+read -p "Insira o nome do seu hostname: " -r hostname < /dev/tty
+echo "Gerando o Hosts"
+printf "%s\n" "$hostname" > /etc/hostname
+printf "127.0.0.1 %s localhost\n::1 %s localhost\n" "$hostname" "$hostname" > /etc/hosts
+
+clear
+echo "Criando serviços"
+rc-update add NetworkManager default
+rc-update add dbus default
+rc-update add elogind default
+
+clear
+echo "Configurando o doas"
+printf "permit persist :wheel\n" > /etc/doas.conf
+
+echo "Saindo do Chroot..."
+exit
+EOF
+
+clear
+echo "Finalizado a instalação"
+umount -R /mnt/gentoo
+
+echo "Reiniciando em 5 segundos..."
+sleep 5s
+reboot
