@@ -1,49 +1,46 @@
-# gentoo_helper
+# 🛠️ gentoo_helper
 
-Este é um script em Shell Bash desenvolvido para automatizar a instalação básica do Gentoo Linux de forma rápida e prática, configurado sob medida para o usuário [**zLuuzis**](https://github.com/zLuuzis).
+> **Automated Gentoo Linux installation script tailored for zLuuzis.**
 
-## 🚀 Funcionalidades
+![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![Shell Script](https://img.shields.io/badge/Language-Shell_Script-4EAA25?logo=gnu-bash&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Gentoo_Linux-dddaff?logo=gentoo&logoColor=ffffff)
 
-- Configuração de rede automatizada (via `nmtui` ou `nmcli`).
-- Particionamento interativo com `cfdisk`.
-- Formatação e montagem automática de partições.
-- Otimização do `make.conf` (suporte a processadores nativos e placa de vídeo NVIDIA).
-- Sincronização automatizada do Portage e Binhost.
-- Instalação automatizada do Kernel (`gentoo-kernel-bin`) e ferramentas essenciais.
-- Configuração de usuários, hostname e serviços iniciais (OpenRC).
+---
 
-## ⚠️ Pré-requisitos
+## 🌐 Language / Idioma
+* 🇺🇸 [English Version](#-english-version)
+* 🇧🇷 [Versão em Português](#-versão-em-português)
 
-Antes de rodar o script, certifique-se de que:
-1. Você iniciou o computador através da ISO oficial de instalação do Gentoo.
-2. Você esteja rodando em usuário **root** (o script verifica isso automaticamente).
-3. Há uma conexão ativa com a internet ou interface de rede disponível.
+---
 
-## ⚖️ Licença
-
-Este projeto está sob a licença GNU/GPL v3.0 - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
-# gentoo_helper
+## 🇺🇸 English Version
 
 This is a Bash Shell script developed to automate the basic installation of Gentoo Linux quickly and practically, custom-configured for the user [**zLuuzis**](https://github.com/zLuuzis).
 
-## 🚀 Features
+### 🚀 Features
+* **Automated Network:** Configuration via `nmtui` or `nmcli`.
+* **Partitioning:** Interactive drive management with `cfdisk`.
+* **Automation:** Automatic formatting and mounting of partitions.
+* **Optimized Build:** `make.conf` pre-tuned for native processors and NVIDIA graphics cards.
+* **Syncing:** Automated Portage and Binhost synchronization.
+* **Kernel & Tools:** Automatic deployment of `gentoo-kernel-bin` and essential tools.
+* **Init System:** Fast setup of users, hostname, and basic services (OpenRC).
 
-- Automated network configuration (via `nmtui` or `nmcli`).
-- Interactive partitioning with `cfdisk`.
-- Automatic formatting and mounting of partitions.
-- `make.conf` optimization (support for native processors and NVIDIA graphics cards).
-- Automated Portage and Binhost synchronization.
-- Automated installation of the Kernel (`gentoo-kernel-bin`) and essential tools.
-- Configuration of users, hostname, and initial services (OpenRC).
+### ⚠️ Prerequisites
+> [!IMPORTANT]
+> Before running the script, make sure that:
+> 1. You booted the computer using the official Gentoo installation ISO.
+> 2. You are running as the **root** user (the script checks this automatically).
+> 3. There is an active internet connection or an available network interface.
 
-## ⚠️ Prerequisites
+### ⚙️ How to Use
+```bash
+# 1. Download the script
+wget [https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh](https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh)
 
-Before running the script, make sure that:
-1. You booted the computer using the official Gentoo installation ISO.
-2. You are running as the **root** user (the script checks this automatically).
-3. There is an active internet connection or an available network interface.
+# 2. Grant execution permissions
+chmod +x gentoo_helper.sh
 
-## ⚖️ License
-
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+# 3. Run as root
+./gentoo_helper.sh
