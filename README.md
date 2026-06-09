@@ -45,6 +45,7 @@ chmod +x gentoo_helper.sh
 # 3. Run as root
 ./gentoo_helper.sh
 ```
+---
 
 ## 🇧🇷 Versão em Português
 
