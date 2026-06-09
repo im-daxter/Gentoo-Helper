@@ -40,10 +40,10 @@ This is a Bash Shell script developed to automate the basic installation of Gent
 wget [https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh](https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh)
 
 # 2. Grant execution permissions
-chmod +x gentoo_helper.sh
+chmod +x gentoo_helper
 
 # 3. Run as root
-./gentoo_helper.sh
+./gentoo_helper
 ```
 ---
 
@@ -73,7 +73,7 @@ Este é um script em Shell Bash desenvolvido para automatizar a instalação bá
 wget [https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh](https://raw.githubusercontent.com/im-daxter/gentoo_helper/main/gentoo_helper.sh)
 
 # 2. Dê permissão de execução
-chmod +x gentoo_helper.sh
+chmod +x gentoo_helper
 
 # 3. Execute como root
-./gentoo_helper.sh
+./gentoo_helper
