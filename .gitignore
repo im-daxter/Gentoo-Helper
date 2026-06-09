@@ -1,0 +1,5 @@
+# Arquivos de editores e sistemas
+.vscode/
+.idea/
+.DS_Store
+*.swp
