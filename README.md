@@ -1,6 +1,6 @@
 # gentoo_helper
 
-Este é um script em Shell Bash desenvolvido para automatizar a instalação básica do Gentoo Linux de forma rápida e prática, configurado sob medida para o usuário **zLuuzis**.
+Este é um script em Shell Bash desenvolvido para automatizar a instalação básica do Gentoo Linux de forma rápida e prática, configurado sob medida para o usuário [**zLuuzis**](https://github.com/zLuuzis).
 
 ## 🚀 Funcionalidades
 
