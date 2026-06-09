@@ -16,6 +16,6 @@ Este é um script em Shell Bash desenvolvido para automatizar a instalação bá
 
 Antes de rodar o script, certifique-se de que:
 1. Você iniciou o computador através da ISO oficial de instalação do Gentoo.
-2. Você possui privilégios de **root** (o script verifica isso automaticamente).
+2. Você esteja rodando em usuário **root** (o script verifica isso automaticamente).
 3. Há uma conexão ativa com a internet ou interface de rede disponível.
 
